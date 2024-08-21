@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Stats Query</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Search for Job Stats</h1>
+        <form method="POST">
+            <label for="user_name">User Name:</label>
+            <input type="text" id="user_name" name="user_name">
+
+            <label for="job_id">Job ID:</label>
+            <input type="text" id="job_id" name="job_id">
+
+            <label for="job_name">Job Name:</label>
+            <input type="text" id="job_name" name="job_name">
+
+            <button type="submit">Search</button>
+        </form>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        {% if result %}
+            <h2>Job Details</h2>
+            <p><strong>Job Name:</strong> {{ result['job_name'] }}</p>
+            <p><strong>Job ID:</strong> {{ result['fermi_job_id'] }}</p>
+            <p><strong>User Name:</strong> {{ result['user_id'] }}</p>
+
+            <h3>Main Stats</h3>
+            <ul>
+                {% for stat in result['main_stats'] %}
+                    {% for key, value in stat.items() %}
+                        <li>{{ key }}: {{ value }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+
+            <h3>Runtime Analysis</h3>
+            <ul>
+                {% for stat in result['runtime_analysis'] %}
+                    {% for key, value in stat.items() %}
+                        <li>{{ key }}: {{ value }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+
+            <h3>Geometric Analysis</h3>
+            <ul>
+                {% for stat in result['geometric_analysis'] %}
+                    {% for key, value in stat.items() %}
+                        <li>{{ key }}: {{ value }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+
+            <h3>Statistical Analysis</h3>
+            <ul>
+                {% for set in result['statistical_analysis'] %}
+                    <li>Set ID: {{ set['set_id'] }}
+                        <ul>
+                            {% for key, value in set['properties'].items() %}
+                                <li>{{ key }}: {{ value }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>

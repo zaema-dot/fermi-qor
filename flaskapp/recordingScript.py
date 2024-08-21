@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 # Import the schema from createDB.py
-from createDB import Job, MainStats, RuntimeAnalysis, GeometricAnalysis, StatisticalAnalysis, setup_database
+from flaskapp.createDB import Job, MainStats, RuntimeAnalysis, GeometricAnalysis, StatisticalAnalysis, setup_database
 
 # Database setup (reusing the session creation function from createDB.py)
 def get_session():
