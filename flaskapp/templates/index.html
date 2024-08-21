@@ -3,74 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Stats Query</title>
+    <title>Job Stats Lookup</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Search for Job Stats</h1>
-        <form method="POST">
-            <label for="user_name">User Name:</label>
-            <input type="text" id="user_name" name="user_name">
-
-            <label for="job_id">Job ID:</label>
-            <input type="text" id="job_id" name="job_id">
-
-            <label for="job_name">Job Name:</label>
-            <input type="text" id="job_name" name="job_name">
-
+        <h1>Job Stats Lookup</h1>
+        <form method="POST" action="/">
+            <div class="form-group">
+                <label for="query_type">Search by:</label>
+                <select name="query_type" id="query_type" required>
+                    <option value="job_id">Job ID</option>
+                    <option value="job_name">Job Name</option>
+                    <option value="user_id">User Name</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query_value">Enter Value:</label>
+                <input type="text" name="query_value" id="query_value" required>
+            </div>
+            <div class="form-group">
+                <label for="stats_type">Select Stats Type:</label>
+                <select name="stats_type" id="stats_type" required>
+                    <option value="main">Main Stats</option>
+                    <option value="runtime">Runtime Analysis</option>
+                    <option value="geometric">Geometric Analysis</option>
+                    <option value="statistical">Statistical Analysis</option>
+                    <option value="all">All Stats</option>
+                </select>
+            </div>
             <button type="submit">Search</button>
         </form>
 
-        {% if error %}
-            <div class="error">{{ error }}</div>
-        {% endif %}
-
-        {% if result %}
-            <h2>Job Details</h2>
-            <p><strong>Job Name:</strong> {{ result['job_name'] }}</p>
-            <p><strong>Job ID:</strong> {{ result['fermi_job_id'] }}</p>
-            <p><strong>User Name:</strong> {{ result['user_id'] }}</p>
-
-            <h3>Main Stats</h3>
-            <ul>
-                {% for stat in result['main_stats'] %}
-                    {% for key, value in stat.items() %}
-                        <li>{{ key }}: {{ value }}</li>
-                    {% endfor %}
+        {% if results %}
+        <div class="results">
+            <h2>Results</h2>
+            {% if stats_type == 'all' or stats_type == 'main' %}
+                <h3>Main Stats</h3>
+                <ul>
+                {% for stat in results.main_stats %}
+                    <li>{{ stat.property }}: {{ stat.value }}</li>
                 {% endfor %}
-            </ul>
-
-            <h3>Runtime Analysis</h3>
-            <ul>
-                {% for stat in result['runtime_analysis'] %}
-                    {% for key, value in stat.items() %}
-                        <li>{{ key }}: {{ value }}</li>
-                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if stats_type == 'all' or stats_type == 'runtime' %}
+                <h3>Runtime Analysis</h3>
+                <ul>
+                {% for stat in results.runtime_analysis %}
+                    <li>{{ stat.property }}: {{ stat.value }}</li>
                 {% endfor %}
-            </ul>
-
-            <h3>Geometric Analysis</h3>
-            <ul>
-                {% for stat in result['geometric_analysis'] %}
-                    {% for key, value in stat.items() %}
-                        <li>{{ key }}: {{ value }}</li>
-                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if stats_type == 'all' or stats_type == 'geometric' %}
+                <h3>Geometric Analysis</h3>
+                <ul>
+                {% for stat in results.geometric_analysis %}
+                    <li>{{ stat.property }}: {{ stat.value }}</li>
                 {% endfor %}
-            </ul>
-
-            <h3>Statistical Analysis</h3>
-            <ul>
-                {% for set in result['statistical_analysis'] %}
-                    <li>Set ID: {{ set['set_id'] }}
-                        <ul>
-                            {% for key, value in set['properties'].items() %}
-                                <li>{{ key }}: {{ value }}</li>
-                            {% endfor %}
-                        </ul>
-                    </li>
+                </ul>
+            {% endif %}
+            {% if stats_type == 'all' or stats_type == 'statistical' %}
+                <h3>Statistical Analysis</h3>
+                <ul>
+                {% for stat in results.statistical_analysis %}
+                    <li>{{ stat.property }}: {{ stat.value }}</li>
                 {% endfor %}
-            </ul>
+                </ul>
+            {% endif %}
+        </div>
         {% endif %}
     </div>
 </body>
