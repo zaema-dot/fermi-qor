@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from createDB import Job, MainStats, RuntimeAnalysis, GeometricAnalysis, StatisticalAnalysis  # import your models
+from createDB import Job, MainStats, RuntimeAnalysis, GeometricAnalysis, StatisticalAnalysis, setup_database  # import your models
 
 app = Flask(__name__)
 
 # Setup the database connection
-engine = create_engine('mysql+pymysql://d2s:d2s_1234@localhost/emumbaqor')
+engine = create_engine('mysql+pymysql://d2s:d2s_1234@db/emumbaqor')
 Session = sessionmaker(bind=engine)
 
 @app.route("/", methods=["GET", "POST"])
@@ -37,6 +37,7 @@ def index():
             }
 
     return render_template("index.html", results=results, stats_type=stats_type)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

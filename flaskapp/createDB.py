@@ -61,8 +61,12 @@ class StatisticalAnalysis(Base):
 
 # Database setup
 def setup_database():
-    # Replace with your actual MySQL connection details
-    engine = create_engine('mysql+pymysql://d2s:d2s_1234@localhost/emumbaqor')
+    engine = None
+    try:
+        engine = create_engine('mysql+pymysql://d2s:d2s_1234@localhost:3307/emumbaqor')
+    except Exception as e:
+        print("Couldn't connect to the database. Please check your connection string.", e)
+        return
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     return Session()
