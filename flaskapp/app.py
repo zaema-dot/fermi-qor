@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, make_response
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from recordingScript import Job, MainStats, RuntimeAnalysis, GeometricAnalysis, StatisticalAnalysis, setup_database  # import your models
@@ -38,6 +38,8 @@ def index():
             }
         else:
             error_message = f"No records found for {query_type.replace('_', ' ')}: {query_value}"
+            return make_response(render_template("index.html", results=results, stats_type=stats_type, error_message=error_message), 404)
+
 
 
     return render_template("index.html", results=results, stats_type=stats_type, error_message=error_message)
