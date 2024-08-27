@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from createDB import Job, MainStats, RuntimeAnalysis, GeometricAnalysis, StatisticalAnalysis, setup_database  # import your models
+from recordingScript import Job, MainStats, RuntimeAnalysis, GeometricAnalysis, StatisticalAnalysis, setup_database  # import your models
 
 app = Flask(__name__)
 
