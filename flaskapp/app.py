@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
-from createDB import Job, MainStats, RuntimeAnalysis, GeometricAnalysis, StatisticalAnalysis  # import your models
+from recordingScript import Job, MainStats, RuntimeAnalysis, GeometricAnalysis, StatisticalAnalysis, setup_database  # import your models
 
 app = Flask(__name__)
 
 # Setup the database connection
-engine = create_engine('mysql+pymysql://d2s:d2s_1234@localhost/emumbaqor')
+engine = create_engine('mysql+pymysql://d2s:d2s_1234@db/emumbaqor')
 Session = sessionmaker(bind=engine)
 
 @app.route("/", methods=["GET", "POST"])
@@ -14,7 +14,8 @@ def index():
     session = Session()
     results = None
     stats_type = None
-
+    error_message = None  
+    
     if request.method == "POST":
         query_type = request.form["query_type"]
         query_value = request.form["query_value"]
@@ -35,8 +36,12 @@ def index():
                 "geometric_analysis": session.query(GeometricAnalysis).filter(GeometricAnalysis.job_id == query.id).all() if stats_type in ["all", "geometric"] else None,
                 "statistical_analysis": session.query(StatisticalAnalysis).filter(StatisticalAnalysis.job_id == query.id).all() if stats_type in ["all", "statistical"] else None
             }
+        else:
+            error_message = f"No records found for {query_type.replace('_', ' ')}: {query_value}"
 
-    return render_template("index.html", results=results, stats_type=stats_type)
+
+    return render_template("index.html", results=results, stats_type=stats_type, error_message=error_message)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
