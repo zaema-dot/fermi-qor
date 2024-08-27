@@ -14,7 +14,8 @@ def index():
     session = Session()
     results = None
     stats_type = None
-
+    error_message = None  
+    
     if request.method == "POST":
         query_type = request.form["query_type"]
         query_value = request.form["query_value"]
@@ -35,8 +36,11 @@ def index():
                 "geometric_analysis": session.query(GeometricAnalysis).filter(GeometricAnalysis.job_id == query.id).all() if stats_type in ["all", "geometric"] else None,
                 "statistical_analysis": session.query(StatisticalAnalysis).filter(StatisticalAnalysis.job_id == query.id).all() if stats_type in ["all", "statistical"] else None
             }
+        else:
+            error_message = f"No records found for {query_type.replace('_', ' ')}: {query_value}"
 
-    return render_template("index.html", results=results, stats_type=stats_type)
+
+    return render_template("index.html", results=results, stats_type=stats_type, error_message=error_message)
 
 
 if __name__ == "__main__":

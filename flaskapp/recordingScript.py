@@ -9,31 +9,53 @@ from createDB import Job, MainStats, RuntimeAnalysis, GeometricAnalysis, Statist
 def get_session():
     return setup_database()
 
-# Insert data into the database
 def insert_main_stats(session, job_id, data):
+    # Clear existing entries
+    session.query(MainStats).filter_by(job_id=job_id).delete()
+    
+    # Insert new data
     for key, value in data.items():
         main_stats = MainStats(job_id=job_id, property=key, value=value)
         session.add(main_stats)
     session.commit()
 
+
 def insert_runtimeanalysis_stats(session, job_id, data):
+    # Clear existing entries
+    session.query(RuntimeAnalysis).filter_by(job_id=job_id).delete()
+    
+    # Insert new data
     for key, value in data.items():
         rta_stats = RuntimeAnalysis(job_id=job_id, property=key, value=value)
         session.add(rta_stats)
     session.commit()
+    
+
 
 def insert_geometricanalysis_stats(session, job_id, data):
+    # Clear existing entries
+    session.query(GeometricAnalysis).filter_by(job_id=job_id).delete()
+    
+    # Insert new data
     for key, value in data.items():
         ga_stats = GeometricAnalysis(job_id=job_id, property=key, value=value)
         session.add(ga_stats)
     session.commit()
+    
+
 
 def insert_statistical_analysis_stats(session, job_id, data):
+    # Clear existing entries
+    session.query(StatisticalAnalysis).filter_by(job_id=job_id).delete()
+    
+    # Insert new data
     set_id = data.pop('set_id')
     for key, value in data.items():
         sa_stats = StatisticalAnalysis(job_id=job_id, set_id=set_id, property=key, value=value)
         session.add(sa_stats)
     session.commit()
+
+
 
 def parse_fermi_txt(file_path):
     with open(file_path, 'r') as file:
@@ -99,20 +121,33 @@ def parse_fermi_txt(file_path):
     }
 
 def insert_job(session, job_data):
-    job = Job(
-        fermi_job_id=job_data['fermi_job_id'],
-        user_id=job_data['user_id'],
-        job_name=job_data['job_name']
-    )
-    session.add(job)
-    session.commit()
+    # Check if a job with the same fermi_job_id already exists
+    job = session.query(Job).filter_by(fermi_job_id=job_data['fermi_job_id']).one_or_none()
+    
+    if job is None:
+        # No existing job found, create a new one
+        job = Job(
+            fermi_job_id=job_data['fermi_job_id'],
+            user_id=job_data['user_id'],
+            job_name=job_data['job_name']
+        )
+        session.add(job)
+        session.commit()
+    else:
+        # Existing job found, update it
+        job.user_id = job_data['user_id']
+        job.job_name = job_data['job_name']
+        session.commit()
+
     return job.id
+
+
 
 def main():
     session = get_session()
 
     # Parse the fermi.txt file
-    fermi_file_path = os.path.expanduser('./fermi.txt')
+    fermi_file_path = os.path.expanduser('./fermicopy.txt')
     parsed_data = parse_fermi_txt(fermi_file_path)
 
     # Insert job data and get job_id

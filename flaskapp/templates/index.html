@@ -35,6 +35,12 @@
             <button type="submit">Search</button>
         </form>
 
+        {% if error_message %}
+        <div class="error-message" style="color: red;">
+            <strong>Error:</strong> {{ error_message }}
+        </div>
+        {% endif %}
+
         {% if results %}
         <div class="results">
             <h2>Results</h2>
