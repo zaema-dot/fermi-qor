@@ -4,8 +4,8 @@ import os
 
 # Base URL of your Flask API
 # BASE_URL = "http://172.18.0.3:5000"
-# BASE_URL = os.getenv("BASE_URL", "https://b770-2407-d000-1a-f17a-a7ee-a0fc-be8b-82f9.ngrok-free.app")
-BASE_URL = os.getenv("NGROK_URL", "http://172.18.0.3:5000")
+BASE_URL = os.getenv("BASE_URL", "https://8efd-2407-d000-1a-f17a-a7ee-a0fc-be8b-82f9.ngrok-free.app")
+#BASE_URL = os.getenv("NGROK_URL", "http://172.18.0.3:5000")
 
 
 # Test data for different queries
