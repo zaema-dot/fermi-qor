@@ -49,20 +49,20 @@ def test_query_combinations(data):
     )
     assert response.status_code == 200
 
-    # Further checks based on stats_type
+   # Check based on stats_type
     if data["stats_type"] == "main":
-        assert "main_stats" in response.text
+        assert "Main Stats" in response.text
     elif data["stats_type"] == "runtime":
-        assert "runtime_analysis" in response.text
+        assert "Runtime Analysis" in response.text
     elif data["stats_type"] == "statistical":
-        assert "statistical_analysis" in response.text
+        assert "Statistical Analysis" in response.text
     elif data["stats_type"] == "geometric":
-        assert "geometric_analysis" in response.text
+        assert "Geometric Analysis" in response.text
     elif data["stats_type"] == "all":
-        assert "main_stats" in response.text
-        assert "runtime_analysis" in response.text
-        assert "statistical_analysis" in response.text
-        assert "geometric_analysis" in response.text
+        assert "Main Stats" in response.text
+        assert "Runtime Analysis" in response.text
+        assert "Statistical Analysis" in response.text
+        assert "Geometric Analysis" in response.text
 
 # Test 3: Combination tests for invalid queries that should return 404 status code
 @pytest.mark.parametrize("data", invalid_test_data)
