@@ -1,0 +1,76 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - '*'  # Run on push to any branch
+  pull_request:
+    branches:
+      - 'main'  # Run on pull request to main branch
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'  # or whatever Python version you are using
+
+    - name: Install dependencies
+      run: |
+        pip install -r flaskapp/requirements.txt
+
+    - name: Run API tests with pytest
+      run: |
+        pytest flaskapp/test.py --html=report.html
+
+    - name: Send Email
+      uses: hilarion5/send-mail@v1
+      with:
+        smtp-server: smtp.gmail.com  # Replace with your SMTP server
+        smtp-port: 465  # Replace with the correct SMTP port
+        smtp-secure: true  # If your SMTP server uses SSL/TLS
+        from-email: zaema.khurram@emumba.com  # Replace with the sender's email
+        to-email: zaema.khurram@emumba.com  # Replace with the recipient's emails
+        username: zaema.khurram@emumba.com  # Replace with your SMTP username
+        password: hzle msey pbno jwkl  # Replace with your SMTP password
+        subject: Test Results
+        body: |
+          Test results are attached.
+        to: zaema.khurram@emumba.com
+        from: zaema.khurram@emumba.com
+        content_type: text/html
+        attachments: report.html
+      
+
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: test  # This makes the build job dependent on the test job
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build Docker image
+      run: |
+        docker compose -f flaskapp/docker-compose.yml build
+
+  deploy:
+    name: Deploy Locally with Docker Compose
+    runs-on: ubuntu-latest
+    needs: build  # This makes the deploy job dependent on the build job
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Run Docker Compose
+      run: |
+        docker compose -f flaskapp/docker-compose.yml up -d
