@@ -37,7 +37,7 @@ jobs:
 
     - name: Set BASE_URL environment variable
       run: |
-        echo "BASE_URL=https://0699-203-99-184-187.ngrok-free.app" >> $GITHUB_ENV
+        echo "BASE_URL=https://b770-2407-d000-1a-f17a-a7ee-a0fc-be8b-82f9.ngrok-free.app" >> $GITHUB_ENV
 
 
     - name: Run API tests with pytest
