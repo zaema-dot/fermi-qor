@@ -35,9 +35,27 @@ jobs:
         # Adjust this sleep duration based on how long your app takes to start
         sleep 10
 
-    - name: Set BASE_URL environment variable
+    # - name: Set BASE_URL environment variable
+    #   run: |
+    #     echo "BASE_URL=https://b770-2407-d000-1a-f17a-a7ee-a0fc-be8b-82f9.ngrok-free.app" >> $GITHUB_ENV
+
+    - name: Install ngrok
       run: |
-        echo "BASE_URL=https://b770-2407-d000-1a-f17a-a7ee-a0fc-be8b-82f9.ngrok-free.app" >> $GITHUB_ENV
+        curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null &&
+        echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list &&
+        sudo apt-get update && sudo apt-get install ngrok
+
+    - name: Start ngrok
+      id: ngrok
+      run: |
+        ngrok http 172.18.0.3:5000 --log=stdout > ngrok.log &
+        sleep 5  # Give ngrok some time to initialize
+
+    - name: Fetch ngrok URL
+      id: fetch-ngrok-url
+      run: |
+        export NGROK_URL=$(curl --silent --show-error http://localhost:4040/api/tunnels | jq -r .tunnels[0].public_url)
+        echo "NGROK_URL=${NGROK_URL}" >> $GITHUB_ENV
 
 
     - name: Run API tests with pytest
