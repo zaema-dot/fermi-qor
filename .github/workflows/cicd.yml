@@ -122,7 +122,7 @@ jobs:
 
     - name: Pull latest Docker image
       run: |
-        docker pull zaema-dot/flaskapp-web:${{ github.sha }}
+        docker pull zaemadot/flaskapp-web:${{ github.sha }}
 
     - name: Stop and Remove Existing Containers
       run: |
