@@ -36,10 +36,12 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build and tag Docker image
+      working-directory: ./flaskapp 
       run: |
-        docker build -t zaema-dot/flaskapp-web:${{ github.sha }} -f flaskapp/Dockerfile .
+        docker build -t zaema-dot/flaskapp-web:${{ github.sha }} .
 
     - name: Push Docker image to registry
+      working-directory: ./flaskapp 
       run: |
         docker push zaema-dot/flaskapp-web:${{ github.sha }}
 
