@@ -10,11 +10,13 @@ on:
     branches:
       - main
       - feature/dockerize
+      - test/workflow
   
   pull_request:
     branches:
-      - main
+      - main #newbranch
       - feature/dockerize
+      - test/workflow
 
 jobs:
   build:
@@ -95,8 +97,8 @@ jobs:
     #   github.ref == 'refs/heads/main' && github.event_name == 'push' || 
     #   github.event_name == 'pull_request' && github.event.pull_request.merged == true
     if: >
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') || 
-      (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main' && github.event.pull_request.merged == true)
+      (github.event_name == 'push' && github.ref == 'refs/heads/feature/dockerize') || 
+      (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'feature/dockerize' && github.event.pull_request.merged == true)
 
 
     steps:
