@@ -38,7 +38,8 @@ jobs:
     - name: Build and tag Docker image
       working-directory: ./flaskapp 
       run: |
-        docker build -t zaema-dot/flaskapp-web:${{ github.sha }} .
+        docker build -t flaskapp-web:latest .
+        docker tag flaskapp-web:latest zaema-dot/flaskapp-web:${{ github.sha }}
 
     - name: Push Docker image to registry
       working-directory: ./flaskapp 
