@@ -124,10 +124,10 @@ jobs:
       run: |
         docker pull zaemadot/flaskapp-web:${{ github.sha }}
 
-        - name: Stop and Remove Existing Containers
-        working-directory: ./flaskapp  # Ensure this points to the directory containing your docker-compose.yml
-        run: |
-          docker compose down || true
+    - name: Stop and Remove Existing Containers
+      working-directory: ./flaskapp  # Ensure this points to the directory containing your docker-compose.yml
+      run: |
+        docker compose down || true
     
     - name: Run Docker Compose
       working-directory: ./flaskapp  # Ensure this points to the directory containing your docker-compose.yml
