@@ -45,8 +45,8 @@ jobs:
 
     - name: Run API tests with pytest
       run: |
-        pip install -r requirements.txt
-        pytest | tee test-results.txt
+        pip install -r flaskapp/requirements.txt
+        pytest flaskapp/test.py | tee test-results.txt
 
         - name: Read test results
         id: read_results
