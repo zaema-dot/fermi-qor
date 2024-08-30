@@ -38,8 +38,7 @@ invalid_test_data = [
 def test_homepage_loading():
     response = requests.get(f"{BASE_URL}/")
     assert response.status_code == 200
-    assert response.elapsed.total_seconds() < 2  # Response time less than 200ms
-
+    assert response.elapsed.total_seconds() < 2  
 # Test 2: Combination tests for different query types and stats types
 @pytest.mark.parametrize("data", test_data)
 def test_query_combinations(data):
