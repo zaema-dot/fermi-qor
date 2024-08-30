@@ -43,27 +43,29 @@ jobs:
       run: |
         echo "BASE_URL=https://9ac2-203-99-184-187.ngrok-free.app" >> $GITHUB_ENV
 
+    - name: Install dependencies
+      run: |
+        pip install -r flaskapp/requirements.txt    
+        
     - name: Run API tests with pytest
       run: |
-        pip install -r flaskapp/requirements.txt
-        pytest flaskapp/test.py | tee test-results.txt
-
-        - name: Read test results
-        id: read_results
-        run: |
-          echo "::set-output name=results::$(cat test-results.txt)"
+        pytest flaskapp/test.py --html=report.html
     
-    - name: Send test results via email
-      uses: dawidd6/action-send-mail@v3
+    - name: Send Email with Test Report
+      uses: hilarion5/send-mail@v1
       with:
-        server_address: smtp.gmail.com
-        server_port: 587
-        username: "zaema.khurram@emumba.com"
-        password: "hzle msey pbno jwkl"
-        subject: Test Results from GitHub Actions
-        body: ${{ steps.read_results.outputs.results }}
-        to: zaema.khurram@emumba.com
-        from: zaema.khurram@emumba.com
+        smtp-server: smtp.gmail.com
+        smtp-port: 465
+        smtp-secure: true
+        from-email: zaema.khurram@emumba.com
+        to-email: zaema.khurram@emumba.com
+        username: zaema.khurram@emumba.com
+        password: hzle msey pbno jwkl
+        subject: Test Results
+        body: |
+          Test results are attached.
+        content_type: text/html
+        attachments: report.html
 
   merge:
     name: Merge Pull Request
