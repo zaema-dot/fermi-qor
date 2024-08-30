@@ -39,12 +39,12 @@ jobs:
       working-directory: ./flaskapp 
       run: |
         docker build -t flaskapp-web:latest .
-        docker tag flaskapp-web:latest zaema-dot/flaskapp-web:${{ github.sha }}
+        docker tag flaskapp-web:latest zaemadot/flaskapp-web:${{ github.sha }}
 
     - name: Push Docker image to registry
       working-directory: ./flaskapp 
       run: |
-        docker push zaema-dot/flaskapp-web:${{ github.sha }}
+        docker push zaemadot/flaskapp-web:${{ github.sha }}
 
   test:
     name: Run Tests
