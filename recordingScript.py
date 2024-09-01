@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 import os
+import argparse
 
 Base = declarative_base()
 
@@ -192,10 +193,23 @@ def parse_fermi_txt(file_path):
         }
     }
 def main():
+    
+    # Set up argument parser
+    parser = argparse.ArgumentParser(description='Parse a fermi.txt file and insert data into the database.')
+    parser.add_argument('-f', '--file', type=str, required=True, help='Path to the fermi.txt file')
+    
+    # Parse the arguments
+    args = parser.parse_args()
+    fermi_file_path = os.path.expanduser(args.file)
+
+    # Ensure the file exists
+    if not os.path.exists(fermi_file_path):
+        print(f"Error: File '{fermi_file_path}' not found.")
+    
     session = get_session()
 
     # Parse the fermi.txt file
-    fermi_file_path = os.path.expanduser('./fermicopy.txt')
+   #fermi_file_path = os.path.expanduser('./fermicopy.txt')
     parsed_data = parse_fermi_txt(fermi_file_path)
 
     # Insert job data and get job_id
