@@ -57,7 +57,7 @@ jobs:
 
     - name: Set BASE_URL environment variable
       run: |
-        echo "BASE_URL=https://9ac2-203-99-184-187.ngrok-free.app" >> $GITHUB_ENV
+        echo "BASE_URL=https://19cc-2407-d000-d-1a1-7142-592c-35b2-57f9.ngrok-free.app" >> $GITHUB_ENV
 
     - name: Install dependencies
       run: |
@@ -67,21 +67,21 @@ jobs:
       run: |
         pytest flaskapp/test.py --html=report.html
     
+
+
     - name: Send Email with Test Report
-      uses: hilarion5/send-mail@v1
+      uses: dawidd6/action-send-mail@v3
       with:
-        smtp-server: smtp.gmail.com
-        smtp-port: 465
-        smtp-secure: true
-        from-email: zaema.khurram@emumba.com
-        to-email: zaema.khurram@emumba.com
-        username: zaema.khurram@emumba.com
-        password: hzle msey pbno jwkl
-        subject: Test Results
-        body: |
-          Test results are attached.
-        content_type: text/html
-        attachments: report.html
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: "zaema.khurram@emumba.com"
+        password: "hzle msey pbno jwkl"  # Use the generated app password here
+        subject: "Test Results"
+        body: "Please find the test results attached."
+        to: "zaema.khurram@emumba.com"
+        from: "zaema.khurram@emumba.com"
+        attachments: "report.html"
+      
 
   merge:
     name: Merge Pull Request
@@ -103,13 +103,45 @@ jobs:
         pr_number=${{ github.event.pull_request.number }}
         gh pr merge $pr_number --merge
 
-  deploy:
-    name: Deploy Application
+  deploy_on_push:
+    name: Deploy on Push to feature/dockerize
     runs-on: ubuntu-latest
     needs: [test]  # Ensures deployment occurs only after tests pass
-    if: >
-      (github.event_name == 'push' && github.ref == 'refs/heads/feature/dockerize') || 
-      (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'feature/dockerize' && github.event.pull_request.merged == true)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/dockerize'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v3
+
+    - name: Install Docker Compose
+      run: sudo apt-get update && sudo apt-get install -y docker-compose
+
+    - name: Pull latest Docker image
+      run: |
+        docker pull zaemadot/flaskapp-web:${{ github.sha }}
+
+    - name: Stop and Remove Existing Containers
+      working-directory: ./flaskapp  # Ensure this points to the directory containing your docker-compose.yml
+      run: |
+        docker compose down || true
+
+    - name: Run Docker Compose
+      working-directory: ./flaskapp  # Ensure this points to the directory containing your docker-compose.yml
+      run: docker compose up -d
+
+    - name: Wait for services to be ready
+      run: |
+        sleep 10
+        curl -f https://19cc-2407-d000-d-1a1-7142-592c-35b2-57f9.ngrok-free.app/ || exit 1
+
+  deploy_on_merge:
+    name: Deploy After PR Merge
+    runs-on: ubuntu-latest
+    needs: merge  # Ensures deployment occurs only after merge is successful
+    if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'feature/dockerize' && github.event.pull_request.merged == true
 
     steps:
     - name: Checkout code
@@ -129,7 +161,7 @@ jobs:
       working-directory: ./flaskapp  # Ensure this points to the directory containing your docker-compose.yml
       run: |
         docker compose down || true
-    
+
     - name: Run Docker Compose
       working-directory: ./flaskapp  # Ensure this points to the directory containing your docker-compose.yml
       run: docker compose up -d
@@ -137,4 +169,4 @@ jobs:
     - name: Wait for services to be ready
       run: |
         sleep 10
-        curl -f https://9ac2-203-99-184-187.ngrok-free.app/ || exit 1
+        curl -f https://19cc-2407-d000-d-1a1-7142-592c-35b2-57f9.ngrok-free.app/ || exit 1

@@ -2,9 +2,8 @@ import requests
 import pytest
 import os
 
-# Base URL of your Flask API
-# BASE_URL = "http://172.18.0.3:5000"
-BASE_URL = os.getenv("BASE_URL", "https://9ac2-203-99-184-187.ngrok-free.app")
+# Base URL of Flask API
+BASE_URL = os.getenv("BASE_URL", "https://19cc-2407-d000-d-1a1-7142-592c-35b2-57f9.ngrok-free.app")
 #BASE_URL = os.getenv("NGROK_URL", "http://172.18.0.3:5000")
 
 
