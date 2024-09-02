@@ -13,9 +13,6 @@ FERMI QOR is a comprehensive system designed to parse log files, record statisti
 5. [Docker Setup](#docker-setup)
 6. [Testing and Automation](#testing-and-automation)
 7. [CI/CD Pipeline](#cicd-pipeline)
-8. [Code Overview](#code-overview)
-9. [Contributing](#contributing)
-10. [License](#license)
 
 ## Project Description
 
